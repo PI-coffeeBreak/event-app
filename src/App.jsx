@@ -1,38 +1,59 @@
-import { useEffect } from "react";
-import axios from "axios";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home.jsx";
-import Alerts from "./pages/Alerts.jsx";
 import Profile from "./pages/Profile.jsx";
 import Layout from "./components/Layout.jsx";
+import { MenuProvider } from "./contexts/MenuContext.jsx";
 
 export default function App() {
-  useEffect(() => {
-    // Fetch theme colors from the API using axios
-    axios
-      .get(`${import.meta.env.VITE_API_BASE_URL}/ui/color-theme/color-theme`, {
-      })
-      .then((response) => {
-        const theme = response.data;
-        // Apply theme colors to the document
-        Object.keys(theme).forEach((key) => {
-            document.body.style.setProperty(`--color-${key}`, theme[key]);
-        });
-      })
-      .catch((error) => {
-        console.error("Error fetching theme colors:", error);
-      });
-  }, []);
+  const pages = [
+    {
+      "page_id": "string",
+      "title": "string",
+      "components": [
+        {
+          "name": "string",
+          "component_id": "string"
+        }
+      ]
+    },
+    {
+      "page_id": "strin2",
+      "title": "string2",
+      "components": [
+        {
+          "name": "string2",
+          "component_id": "string2"
+        }
+      ]
+    }
+  ];
 
   return (
     <Router>
-      <Routes>
-        <Route path="/app/*" element={<Layout />}>
-          <Route path="home" element={<Home />} />
-          <Route path="alerts" element={<Alerts />} />
-          <Route path="profile" element={<Profile />} />
-        </Route>
-      </Routes>
+      <MenuProvider>
+        <Routes>
+          <Route path="/app/*" element={<Layout />}>
+            <Route path="home" element={<Home />} />
+            <Route path="profile" element={<Profile />} />
+            {pages.map((page) => (
+              <Route
+                key={page.page_id}
+                path={page.page_id}
+                element={
+                  <div className="w-full min-h-svh p-8">
+                    <h1>{page.title}</h1>
+                    {page.components.map((component) => (
+                      <div key={component.component_id}>
+                        <h2>{component.name}</h2>
+                      </div>
+                    ))}
+                  </div>
+                }
+              />
+            ))}
+          </Route>
+        </Routes>
+      </MenuProvider>
     </Router>
   );
 }
