@@ -1,35 +1,39 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect } from "react";
+import axios from "axios";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Home from "./pages/Home.jsx";
+import Alerts from "./pages/Alerts.jsx";
+import Profile from "./pages/Profile.jsx";
+import Layout from "./components/Layout.jsx";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  useEffect(() => {
+    // Fetch theme colors from the API using axios
+    axios
+      .get(`${import.meta.env.VITE_API_BASE_URL}/ui/color-theme/color-theme`, {
+      })
+      .then((response) => {
+        const theme = response.data;
+        // Apply theme colors to the document
+        Object.keys(theme).forEach((key) => {
+            document.body.style.setProperty(`--color-${key}`, theme[key]);
+        });
+      })
+      .catch((error) => {
+        console.error("Error fetching theme colors:", error);
+      });
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Router>
+      <Routes>
+        <Route path="/app/*" element={<Layout />}>
+          <Route path="home" element={<Home />} />
+          <Route path="alerts" element={<Alerts />} />
+          <Route path="profile" element={<Profile />} />
+        </Route>
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
