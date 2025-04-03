@@ -1,8 +1,10 @@
 import Dock from "./Dock.jsx";
-import {Outlet} from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
 import { useEffect } from "react";
 import { useState } from "react";
+import { FaBell } from "react-icons/fa";
+import { useSwipeable } from "react-swipeable";
 
 const SideBar = () => {
     return (
@@ -17,11 +19,24 @@ const SideBar = () => {
 };
 
 const MobileLayout = () => {
+    const handleSwipeRight = () => {
+        // Open the drawer by checking the input
+        const drawerInput = document.getElementById("my-drawer");
+        if (drawerInput) {
+            drawerInput.checked = true;
+        }
+    };
+
+    const swipeHandlers = useSwipeable({
+        onSwipedRight: handleSwipeRight,
+        preventDefaultTouchmoveEvent: true,
+        trackTouch: true,
+    });
+
     return (
-        <div className="drawer">
-            {/* Sidebar toggle button */}
+        <div {...swipeHandlers} className="drawer">
             <input id="my-drawer" type="checkbox" className="drawer-toggle" />
-            <div className="drawer-content w-full min-h-svh p-8">
+            <div className="drawer-content w-full min-h-svh py-6 px-4">
                 <div className="flex items-center justify-between mb-8">
                     {/* Sidebar toggle button */}
                     <label htmlFor="my-drawer" aria-label="open sidebar" className="btn btn-square btn-ghost w-12">
@@ -38,24 +53,14 @@ const MobileLayout = () => {
                         </svg>
                     </label>
 
-                    {/* Centered coffeeBreak text */}
+                    {/* coffeeBreak text */}
                     <div className="flex-grow text-center text-2xl text-primary font-bold">
                         coffeeBreak.
                     </div>
 
-                    {/* Button on the right */}
+                    {/* Notification button */}
                     <div className="btn btn-square btn-ghost w-12">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            className="inline-block h-6 w-6 stroke-current">
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M12 4v16m8-8H4"></path>
-                        </svg>
+                        <FaBell className="inline-block h-6 w-6 stroke-current" />
                     </div>
                 </div>
 
@@ -64,7 +69,6 @@ const MobileLayout = () => {
                 <Dock />
             </div>
 
-            {/* Sidebar */}
             <SideBar />
         </div>
     );
@@ -90,7 +94,7 @@ const DesktopLayout = () => {
     );
 };
 
-export default function Layout(){
+export default function Layout() {
     const [isMobile, setIsMobile] = useState(false);
     const isDesktop = useMediaQuery({ query: '(min-width: 1024px)' });
 
@@ -101,7 +105,6 @@ export default function Layout(){
     return (
         <>
             {isMobile ? <MobileLayout /> : <DesktopLayout />}
-            {/* <DesktopLayout /> */}
         </>
     );
 }
