@@ -1,44 +1,26 @@
 import Dock from "./Dock.jsx";
 import { Outlet } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
-import { useEffect } from "react";
-import { useState } from "react";
-import { FaBell, FaHome, FaUser } from "react-icons/fa";
+import { useEffect, useState, useContext } from "react";
+import { FaBell } from "react-icons/fa";
 import { useSwipeable } from "react-swipeable";
-
-const menuItems = [
-    {
-        options: [
-            {
-                icon: <FaHome className="h-5 w-5" />,
-                label: "Home",
-                href: "/home",
-            },
-        ],
-    },
-    {
-        options: [
-            {
-                icon: <FaUser className="h-5 w-5" />,
-                label: "Profile",
-                href: "/profile",
-            },
-        ],
-    },
-];
+import { MenuContext } from "../contexts/MenuContext";
 
 const SideBar = () => {
+    const { menuItems, loading, error } = useContext(MenuContext);
+
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
+
     return (
         <div className="drawer-side z-10">
             <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
             <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Profile</a></li>
-                {menuItems.map((item, index) => (
+                {Array.isArray(menuItems) && menuItems.map((item, index) => (
                     <li key={index}>
-                        <a href={item.options[0].href}>
-                            {item.options[0].icon}
-                            {item.options[0].label}
+                        <a href={item.href} className="flex items-center gap-2">
+                            {item.icon && <span>{item.icon}</span>}
+                            <span>{item.label}</span>
                         </a>
                     </li>
                 ))}
@@ -48,8 +30,9 @@ const SideBar = () => {
 };
 
 const MobileLayout = () => {
+    const { menuItems } = useContext(MenuContext);
+
     const handleSwipeRight = () => {
-        // Open the drawer by checking the input
         const drawerInput = document.getElementById("my-drawer");
         if (drawerInput) {
             drawerInput.checked = true;
@@ -67,7 +50,6 @@ const MobileLayout = () => {
             <input id="my-drawer" type="checkbox" className="drawer-toggle" />
             <div className="drawer-content w-full min-h-svh py-6 px-4">
                 <div className="flex items-center justify-between mb-8">
-                    {/* Sidebar toggle button */}
                     <label htmlFor="my-drawer" aria-label="open sidebar" className="btn btn-square btn-ghost w-12">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -82,18 +64,15 @@ const MobileLayout = () => {
                         </svg>
                     </label>
 
-                    {/* coffeeBreak text */}
                     <div className="flex-grow text-center text-2xl text-primary font-bold">
                         coffeeBreak.
                     </div>
 
-                    {/* Notification button */}
                     <div className="btn btn-square btn-ghost w-12">
                         <FaBell className="inline-block h-6 w-6 stroke-current" />
                     </div>
                 </div>
 
-                {/* Main content */}
                 <Outlet />
                 <Dock />
             </div>
@@ -104,9 +83,13 @@ const MobileLayout = () => {
 };
 
 const DesktopLayout = () => {
+    const { menuItems, loading, error } = useContext(MenuContext);
+
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
+
     return (
         <div className="w-full min-h-svh">
-            {/* Navbar */}
             <div className="navbar bg-primary shadow-sm">
                 <div className="navbar-start">
                     <div className="dropdown">
@@ -127,13 +110,11 @@ const DesktopLayout = () => {
                         <ul
                             tabIndex={0}
                             className="menu menu-sm dropdown-content bg-primary text-base-100 rounded-box z-10 mt-3 w-52 p-2 shadow">
-                            <li><a href="#">Homepage</a></li>
-                            <li><a href="#">Profile</a></li>
-                            {menuItems.map((item, index) => (
+                            {Array.isArray(menuItems) && menuItems.map((item, index) => (
                                 <li key={index}>
-                                    <a href={item.options[0].href}>
-                                        {item.options[0].icon}
-                                        {item.options[0].label}
+                                    <a href={item.href} className="flex items-center gap-2">
+                                        {item.icon && <span>{item.icon}</span>}
+                                        <span>{item.label}</span>
                                     </a>
                                 </li>
                             ))}
@@ -164,7 +145,6 @@ const DesktopLayout = () => {
                 </div>
             </div>
 
-            {/* Main content */}
             <Outlet />
         </div>
     );
@@ -172,15 +152,11 @@ const DesktopLayout = () => {
 
 export default function Layout() {
     const [isMobile, setIsMobile] = useState(false);
-    const isDesktop = useMediaQuery({ query: '(min-width: 1024px)' });
+    const isDesktop = useMediaQuery({ query: "(min-width: 1024px)" });
 
     useEffect(() => {
         setIsMobile(!isDesktop);
     }, [isDesktop]);
 
-    return (
-        <>
-            {isMobile ? <MobileLayout /> : <DesktopLayout />}
-        </>
-    );
+    return <>{isMobile ? <MobileLayout /> : <DesktopLayout />}</>;
 }
