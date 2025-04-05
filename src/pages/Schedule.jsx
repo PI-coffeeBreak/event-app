@@ -24,10 +24,8 @@ export default function Schedule() {
 
     const handleEventMouseEnter = (info) => {
         const tooltip = document.createElement("div");
-        tooltip.className = "tooltip";
+        tooltip.className = "tooltip bg-secondary rounded-lg shadow-lg border p-2 text-base-100";
         tooltip.style.position = "absolute";
-        tooltip.style.background = "#fff";
-        tooltip.style.border = "1px solid #ccc";
         tooltip.style.padding = "10px";
         tooltip.style.zIndex = "1000";
         tooltip.innerHTML = `
@@ -59,12 +57,31 @@ export default function Schedule() {
 
     return (
         <div className="w-full min-h-svh p-8">
-            <h1 className="text-2xl font-bold mb-4">Schedule</h1>
+            <h1 className="text-2xl text-primary font-bold mb-4">Schedule</h1>
             <FullCalendar
                 plugins={[timeGridPlugin, interactionPlugin]}
                 initialView="timeGridDay" // Start with the time grid day view
                 events={events}
+                // slotLabelClassNames={(time) => {
+                //     // Highlight specific time slots
+                //     const hour = time.date.getHours();
+                //     return hour >= 12 && hour <= 14 ? "bg-yellow-100 text-yellow-800" : "";
+                // }}
+                dayHeaderClassNames={(date) => {
+                    // Highlight Today
+                    const day = date.date.getDay();
+                    const today = new Date().getDay();
+                    return day === today
+                        ? "bg-primary text-base-100 font-bold"
+                        : "bg-accent text-black";
+                }}
                 eventMouseEnter={handleEventMouseEnter} // Show tooltip on hover
+                eventClassNames={(info) => {
+                    // Add a custom class based on the event's properties
+                    return info.event.extendedProps.topic === "Important"
+                        ? "bg-red-500 text-white"
+                        : "bg-blue-500 text-white";
+                }}
                 validRange={validRange} // Restrict visible days
                 headerToolbar={{
                     left: "prev,next today", // Navigation buttons
