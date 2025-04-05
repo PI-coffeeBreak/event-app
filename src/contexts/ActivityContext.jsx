@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useMemo } from "react";
 import PropTypes from "prop-types"; // Import PropTypes for validation
 import axios from "axios";
 
@@ -29,12 +29,15 @@ export const ActivityProvider = ({ children }) => {
         fetchActivities();
     }, []);
 
+    // Memoize the context value
+    const contextValue = useMemo(() => ({ activities, loading, error }), [activities, loading, error]);
+
     return (
-        <ActivityContext.Provider value={{ activities, loading, error }}>
+        <ActivityContext.Provider value={contextValue}>
             {children}
         </ActivityContext.Provider>
     );
-};
+};s
 
 // Add PropTypes validation
 ActivityProvider.propTypes = {
