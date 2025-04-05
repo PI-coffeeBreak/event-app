@@ -1,8 +1,10 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import Profile from "./pages/Profile.jsx";
+import Schedule from "./pages/Schedule.jsx";
 import Layout from "./components/Layout.jsx";
 import { MenuProvider } from "./contexts/MenuContext.jsx";
+import { ActivityProvider } from "./contexts/ActivityContext.jsx";
 
 export default function App() {
   const pages = [
@@ -31,28 +33,31 @@ export default function App() {
   return (
     <Router>
       <MenuProvider>
-        <Routes>
-          <Route path="/app/*" element={<Layout />}>
-            <Route path="home" element={<Home />} />
-            <Route path="profile" element={<Profile />} />
-            {pages.map((page) => (
-              <Route
-                key={page.page_id}
-                path={page.page_id}
-                element={
-                  <div className="w-full min-h-svh p-8">
-                    <h1>{page.title}</h1>
-                    {page.components.map((component) => (
-                      <div key={component.component_id}>
-                        <h2>{component.name}</h2>
-                      </div>
-                    ))}
-                  </div>
-                }
-              />
-            ))}
-          </Route>
-        </Routes>
+        <ActivityProvider>
+          <Routes>
+            <Route path="/app/*" element={<Layout />}>
+              <Route path="home" element={<Home />} />
+              <Route path="schedule" element={<Schedule />} />
+              <Route path="profile" element={<Profile />} />
+              {pages.map((page) => (
+                <Route
+                  key={page.page_id}
+                  path={page.page_id}
+                  element={
+                    <div className="w-full min-h-svh p-8">
+                      <h1>{page.title}</h1>
+                      {page.components.map((component) => (
+                        <div key={component.component_id}>
+                          <h2>{component.name}</h2>
+                        </div>
+                      ))}
+                    </div>
+                  }
+                />
+              ))}
+            </Route>
+          </Routes>
+        </ActivityProvider>
       </MenuProvider>
     </Router>
   );

@@ -15,7 +15,7 @@ const SideBar = () => {
     return (
         <div className="drawer-side z-10">
             <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
-            <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
+            <ul className="menu bg-base-100 text-primary min-h-full w-80 p-4 pt-20">
                 {Array.isArray(menuItems) && menuItems.map((item, index) => (
                     <li key={index}>
                         <a href={item.href} className="flex items-center gap-2">
@@ -48,49 +48,58 @@ const MobileLayout = () => {
     return (
         <div {...swipeHandlers} className="drawer">
             <input id="my-drawer" type="checkbox" className="drawer-toggle" />
-            <div className="drawer-content w-full min-h-svh py-6 px-4">
-                <div className="flex items-center justify-between mb-8">
-                    <label htmlFor="my-drawer" aria-label="open sidebar" className="btn btn-square btn-ghost w-12">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            className="inline-block h-6 w-6 stroke-current text-primary">
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
-                    </label>
-
-                    <div className="flex-grow text-center text-2xl text-primary font-bold">
-                        coffeeBreak.
-                    </div>
-
-                    <div className="btn btn-square btn-ghost w-12">
-                        <div className="indicator">
+            <div className="drawer-content w-full min-h-svh">
+                {/* Fixed Navbar */}
+                <div className="navbar bg-base-100 shadow-sm fixed top-0 left-0 w-full z-50">
+                    <div className="navbar-start">
+                        <label htmlFor="my-drawer" aria-label="open sidebar" className="btn btn-square btn-ghost w-12">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
-                                className="h-6 w-6 text-primary"
                                 fill="none"
                                 viewBox="0 0 24 24"
-                                stroke="currentColor">
+                                className="inline-block h-6 w-6 stroke-current text-primary">
                                 <path
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
                                     strokeWidth="2"
-                                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                                    d="M4 6h16M4 12h16M4 18h16"></path>
                             </svg>
-                            <span className="badge badge-xs badge-secondary indicator-item"></span>
-                        </div>
+                        </label>
+                    </div>
+                    <div className="navbar-center">
+                        <a href="/" className="btn btn-ghost text-xl text-primary">
+                            coffeeBreak.
+                        </a>
+                    </div>
+                    <div className="navbar-end">
+                        <button className="btn btn-square btn-ghost w-12">
+                            <div className="indicator">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-6 w-6 text-primary"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                                </svg>
+                                <span className="badge badge-xs badge-secondary indicator-item"></span>
+                            </div>
+                        </button>
                     </div>
                 </div>
 
-                <Outlet />
-                <Dock />
+                {/* Main Content */}
+                <div className="pt-16 px-4">
+                    <Outlet />
+                    <Dock />
+                </div>
             </div>
 
+            {/* Sidebar */}
             <SideBar />
         </div>
     );
@@ -104,7 +113,8 @@ const DesktopLayout = () => {
 
     return (
         <div className="w-full min-h-svh">
-            <div className="navbar bg-primary shadow-sm">
+            {/* Fixed Navbar */}
+            <div className="navbar bg-primary shadow-sm fixed top-0 left-0 w-full z-50">
                 <div className="navbar-start">
                     <div className="dropdown">
                         <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
@@ -136,7 +146,9 @@ const DesktopLayout = () => {
                     </div>
                 </div>
                 <div className="navbar-center">
-                    <a className="btn btn-ghost text-xl text-base-100">coffeeBreak.</a>
+                    <a href="/" className="btn btn-ghost text-xl text-base-100">
+                        coffeeBreak.
+                    </a>
                 </div>
                 <div className="navbar-end">
                     <button className="btn btn-ghost btn-circle">
@@ -159,7 +171,10 @@ const DesktopLayout = () => {
                 </div>
             </div>
 
-            <Outlet />
+            {/* Main Content */}
+            <div className="pt-16">
+                <Outlet />
+            </div>
         </div>
     );
 };

@@ -10,9 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fullcalendar/react": "^6.1.17",
     "@tailwindcss/vite": "^4.0.17",
     "@tanstack/react-query": "^5.71.1",
     "axios": "^1.8.4",
+    "fullcalendar": "^6.1.17",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
