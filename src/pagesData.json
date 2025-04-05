@@ -52,33 +52,49 @@
       }
     ]
   },
-  {
+    {
     "page_id": "custom-page-4",
     "title": "Custom Page 4",
+    "props": { "className": "bg-gray-100 p-4" },
     "components": [
-      {
+        {
         "name": "Card",
         "component_id": "card-1",
-        "props": {
-          "children": [
+        "components": [
             {
-              "name": "Heading",
-              "props": { "level": 3, "text": "Card Title", "className": "text-primary" }
+            "name": "Heading",
+            "props": { "level": 3, "text": "Card Title", "className": "text-primary" }
             },
             {
-              "name": "Text",
-              "props": { "content": "This is some content inside the card.", "className": "text-gray-700" }
+            "name": "Text",
+            "props": { "content": "This is some content inside the card.", "className": "text-gray-700" }
             },
             {
-              "name": "Button",
-              "props": { "text": "Learn More", "METHOD": "GET", "URL": "https://jsonplaceholder.typicode.com/posts/1" }
+            "name": "Button",
+            "props": { "text": "Learn More", "METHOD": "GET", "URL": "https://jsonplaceholder.typicode.com/posts/1" }
             }
-          ],
-          "className": "bg-white shadow-lg"
+        ]
+        },
+        {
+        "name": "Card",
+        "component_id": "card-2",
+        "components": [
+            {
+            "name": "Heading",
+            "props": { "level": 3, "text": "Another Card Title", "className": "text-primary" }
+            },
+            {
+            "name": "Text",
+            "props": { "content": "This is some content inside another card.", "className": "text-gray-700" }
+            },
+            {
+            "name": "Button",
+            "props": { "text": "Read More", "METHOD": "GET", "URL": "https://jsonplaceholder.typicode.com/posts/1" }
+            }
+        ]
         }
-      }
     ]
-  },
+    },
   {
     "page_id": "activity-page",
     "title": "Activity Page",
