@@ -37,7 +37,7 @@ export const ActivityProvider = ({ children }) => {
             {children}
         </ActivityContext.Provider>
     );
-};s
+};
 
 // Add PropTypes validation
 ActivityProvider.propTypes = {
