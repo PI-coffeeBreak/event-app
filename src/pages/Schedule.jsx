@@ -15,16 +15,46 @@ export default function Schedule() {
         title: activity.name,
         start: activity.date,
         end: new Date(new Date(activity.date).getTime() + activity.duration * 60000).toISOString(), // Calculate end time based on duration
+        extendedProps: {
+            description: activity.description,
+            speaker: activity.speaker,
+            topic: activity.topic,
+        },
     }));
+
+    const handleEventMouseEnter = (info) => {
+        const tooltip = document.createElement("div");
+        tooltip.className = "tooltip";
+        tooltip.style.position = "absolute";
+        tooltip.style.background = "#fff";
+        tooltip.style.border = "1px solid #ccc";
+        tooltip.style.padding = "10px";
+        tooltip.style.zIndex = "1000";
+        tooltip.innerHTML = `
+            <strong>${info.event.title}</strong><br />
+            <em>${info.event.extendedProps.topic}</em><br />
+            Speaker: ${info.event.extendedProps.speaker}<br />
+            ${info.event.extendedProps.description}
+        `;
+        document.body.appendChild(tooltip);
+
+        const moveTooltip = (e) => {
+            tooltip.style.left = `${e.pageX + 10}px`;
+            tooltip.style.top = `${e.pageY + 10}px`;
+        };
+
+        document.addEventListener("mousemove", moveTooltip);
+
+        info.el.addEventListener("mouseleave", () => {
+            tooltip.remove();
+            document.removeEventListener("mousemove", moveTooltip);
+        });
+    };
 
     // Calculate the valid range based on activity dates
     const validRange = {
         start: activities.length > 0 ? activities[0].date : null, // Earliest activity date
         end: activities.length > 0 ? activities[activities.length - 1].date : null, // Latest activity date
-    };
-
-    const handleDateClick = (info) => {
-        alert(`You clicked on date: ${info.dateStr}`);
     };
 
     return (
@@ -34,8 +64,8 @@ export default function Schedule() {
                 plugins={[timeGridPlugin, interactionPlugin]}
                 initialView="timeGridDay" // Start with the time grid day view
                 events={events}
+                eventMouseEnter={handleEventMouseEnter} // Show tooltip on hover
                 validRange={validRange} // Restrict visible days
-                dateClick={handleDateClick}
                 headerToolbar={{
                     left: "prev,next today", // Navigation buttons
                     center: "title", // Displays the current date
