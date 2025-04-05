@@ -92,9 +92,28 @@
             "props": { "text": "Read More", "METHOD": "GET", "URL": "https://jsonplaceholder.typicode.com/posts/1" }
             }
         ]
+        },
+        {
+        "name": "Row",
+        "component_id": "row-1",
+        "props": { "className": "flex space-x-4" },
+        "components": [
+            {
+            "name": "Button",
+            "props": { "text": "Click Here", "METHOD": "GET", "URL": "https://jsonplaceholder.typicode.com/posts/1" }
+            },
+            {
+            "name": "Button",
+            "props": { "text": "Submit", "METHOD": "POST", "URL": "https://jsonplaceholder.typicode.com/posts" }
+            },
+            {
+            "name": "Button",
+            "props": { "text": "Cancel", "METHOD": "DELETE", "URL": "https://jsonplaceholder.typicode.com/posts/1" }
+            }
+        ]
         }
     ]
-    },
+  },
   {
     "page_id": "activity-page",
     "title": "Activity Page",

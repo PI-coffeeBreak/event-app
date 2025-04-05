@@ -16,7 +16,7 @@ export const MenuProvider = ({ children }) => {
             try {
                 setLoading(true);
                 const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/ui/menu`);
-                console.log(response.data);
+                console.log("Menu",response.data);
                 setMenuItems(response.data.options);
             } catch (err) {
                 setError(err.message || "Failed to fetch menu");
