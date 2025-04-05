@@ -67,7 +67,9 @@ const MobileLayout = () => {
                         </label>
                     </div>
                     <div className="navbar-center">
-                        <a className="btn btn-ghost text-xl text-primary">coffeeBreak.</a>
+                        <a href="/" className="btn btn-ghost text-xl text-primary">
+                            coffeeBreak.
+                        </a>
                     </div>
                     <div className="navbar-end">
                         <button className="btn btn-square btn-ghost w-12">
@@ -144,7 +146,9 @@ const DesktopLayout = () => {
                     </div>
                 </div>
                 <div className="navbar-center">
-                    <a className="btn btn-ghost text-xl text-base-100">coffeeBreak.</a>
+                    <a href="/" className="btn btn-ghost text-xl text-base-100">
+                        coffeeBreak.
+                    </a>
                 </div>
                 <div className="navbar-end">
                     <button className="btn btn-ghost btn-circle">

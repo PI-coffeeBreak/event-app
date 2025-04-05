@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
+import PropTypes from "prop-types"; // Import PropTypes for validation
 import axios from "axios";
 
 // Create the context
@@ -33,4 +34,9 @@ export const ActivityProvider = ({ children }) => {
             {children}
         </ActivityContext.Provider>
     );
+};
+
+// Add PropTypes validation
+ActivityProvider.propTypes = {
+    children: PropTypes.node.isRequired, // Validate that children is a React node and required
 };
