@@ -55,7 +55,6 @@ export function MenuProvider({ children, endpoint }) {
     };
 
     const getIconComponent = (iconName) => {
-        console.log('MenuContext - Getting icon component for:', iconName);
         const prefix = iconName.substring(0, 2).toLowerCase();
 
         const iconLibraries = {

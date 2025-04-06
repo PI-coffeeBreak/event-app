@@ -1,118 +1,165 @@
 import Dock from "./Dock.jsx";
-import { Outlet } from "react-router-dom";
+import { Outlet, NavLink } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
 import { useEffect, useState, useContext } from "react";
-import { FaBell } from "react-icons/fa";
-import { useSwipeable } from "react-swipeable";
 import { MenuContext } from "../contexts/MenuContext";
-
-const SideBar = () => {
-    const { menuItems, loading, error } = useContext(MenuContext);
-
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
-
-    return (
-        <div className="drawer-side z-10">
-            <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
-            <ul className="menu bg-base-100 text-primary min-h-full w-80 p-4 pt-20">
-                {Array.isArray(menuItems) && menuItems.map((item, index) => (
-                    <li key={index}>
-                        <a href={item.href} className="flex items-center gap-2">
-                            {item.icon && <span>{item.icon}</span>}
-                            <span>{item.label}</span>
-                        </a>
-                    </li>
-                ))}
-            </ul>
-        </div>
-    );
-};
+import { motion } from "framer-motion";
+import { Menu, Bell } from "lucide-react";
+import Sidebar, { SIDEBAR_WIDTH, DRAG_THRESHOLD, TOUCH_THRESHOLD, DRAG_START_THRESHOLD } from "./Sidebar";
 
 const MobileLayout = () => {
-    const { menuItems } = useContext(MenuContext);
+    const [isOpen, setIsOpen] = useState(false);
+    const [dragPosition, setDragPosition] = useState(null);
+    const [touchStart, setTouchStart] = useState(null);
+    const [dragging, setDragging] = useState(false);
+
     console.log('Layout - Rendering MobileLayout');
 
-    const handleSwipeRight = () => {
-        const drawerInput = document.getElementById("my-drawer");
-        if (drawerInput) {
-            drawerInput.checked = true;
+    // Handle touch start
+    const handleTouchStart = (e) => {
+        // Add debug log
+        console.log("Touch target:", e.target.className);
+
+        const touchX = e.touches[0].clientX;
+
+        // If sidebar is open, only allow dragging from backdrop
+        if (isOpen) {
+            const isBackdropClick = e.target.classList.contains('backdrop');
+            if (!isBackdropClick) {
+                console.log("Touch ignored - not on backdrop");
+                return;
+            }
+            console.log("Touch started on backdrop");
+            setTouchStart(touchX);
+            setDragging(true);
+            return;
+        }
+
+        // If sidebar is closed, only allow opening from left edge
+        if (!isOpen && touchX < TOUCH_THRESHOLD) {
+            console.log("Touch started on left edge:", touchX);
+            setTouchStart(touchX);
+            setDragging(true);
         }
     };
 
-    const swipeHandlers = useSwipeable({
-        onSwipedRight: handleSwipeRight,
-        preventDefaultTouchmoveEvent: true,
-        trackTouch: true,
-    });
+    // Handle touch movement
+    const handleTouchMove = (e) => {
+        if (dragging && touchStart !== null) {
+            const currentX = e.touches[0].clientX;
+            const distance = currentX - touchStart;
+
+            if (!isOpen) {
+                // Opening: only allow dragging from left to right (positive values)
+                if (distance > 0) {
+                    console.log("Dragging to open:", distance);
+                    // Don't show sidebar in first pixels of movement
+                    if (distance < DRAG_START_THRESHOLD) {
+                        setDragPosition(-SIDEBAR_WIDTH);
+                        return;
+                    }
+                    // Adjust progress to start after threshold
+                    const adjustedDistance = distance - DRAG_START_THRESHOLD;
+                    const progress = Math.min(adjustedDistance / (SIDEBAR_WIDTH - DRAG_START_THRESHOLD), 1);
+                    const newPosition = -SIDEBAR_WIDTH + (SIDEBAR_WIDTH * progress);
+                    setDragPosition(newPosition);
+                }
+            } else {
+                // Closing: allow dragging from right to left
+                const newPosition = Math.max(-SIDEBAR_WIDTH, Math.min(0, distance));
+                setDragPosition(newPosition);
+                console.log("Dragging to close:", distance, "New position:", newPosition);
+            }
+        }
+    };
+
+    // Handle touch end
+    const handleTouchEnd = () => {
+        if (dragging) {
+            // Decide if sidebar should stay open or closed
+            const threshold = -SIDEBAR_WIDTH * (1 - DRAG_THRESHOLD);
+
+            if (dragPosition !== null && dragPosition > threshold) {
+                setIsOpen(true);
+            } else {
+                setIsOpen(false);
+            }
+
+            // Reset drag state with small delay to allow animation
+            setTimeout(() => {
+                setDragPosition(null);
+                setDragging(false);
+                setTouchStart(null);
+                console.log("Drag finished");
+            }, 50);
+        }
+    };
+
+    useEffect(() => {
+        // Add touch listeners for entire screen
+        document.addEventListener('touchstart', handleTouchStart, { passive: false });
+        document.addEventListener('touchmove', handleTouchMove, { passive: false });
+        document.addEventListener('touchend', handleTouchEnd, { passive: false });
+
+        return () => {
+            // Remove listeners when component unmounts
+            document.removeEventListener('touchstart', handleTouchStart);
+            document.removeEventListener('touchmove', handleTouchMove);
+            document.removeEventListener('touchend', handleTouchEnd);
+        };
+    }, [dragging, touchStart, dragPosition, isOpen]);
+
+    // Animation variants for menu button
+    const menuButtonVariants = {
+        open: { rotate: 180, scale: 1.1, transition: { duration: 0.3 } },
+        closed: { rotate: 0, scale: 1, transition: { duration: 0.3 } }
+    };
 
     return (
-        <div {...swipeHandlers} className="drawer">
-            <input id="my-drawer" type="checkbox" className="drawer-toggle" />
-            <div className="drawer-content w-full min-h-svh">
-                {/* Fixed Navbar */}
-                <div className="navbar bg-base-100 shadow-sm fixed top-0 left-0 w-full z-50">
-                    <div className="navbar-start">
-                        <label htmlFor="my-drawer" aria-label="open sidebar" className="btn btn-square btn-ghost w-12">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                className="inline-block h-6 w-6 stroke-current text-primary">
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M4 6h16M4 12h16M4 18h16"></path>
-                            </svg>
-                        </label>
-                    </div>
-                    <div className="navbar-center">
-                        <a href="/" className="btn btn-ghost text-xl text-primary">
-                            coffeeBreak.
-                        </a>
-                    </div>
-                    <div className="navbar-end">
-                        <button className="btn btn-square btn-ghost w-12">
-                            <div className="indicator">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="h-6 w-6 text-primary"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                                </svg>
-                                <span className="badge badge-xs badge-secondary indicator-item"></span>
-                            </div>
-                        </button>
-                    </div>
-                </div>
+        <div className="min-h-svh overflow-x-hidden touch-pan-y">
+            <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} dragPosition={dragPosition} />
 
-                {/* Main Content */}
-                <div className="pt-16 px-4">
-                    {console.log('Layout - Before Outlet in MobileLayout')}
-                    <Outlet />
-                    <Dock />
+            {/* Fixed Navbar */}
+            <div className="navbar bg-base-100 shadow-sm fixed top-0 min-h-6 lg:min-h-12 left-0 w-full z-40">
+                <div className="navbar-start">
+                    <motion.button
+                        onClick={() => setIsOpen(!isOpen)}
+                        className="btn btn-ghost btn-square"
+                        animate={isOpen ? "open" : "closed"}
+                        variants={menuButtonVariants}
+                        whileTap={{ scale: 0.9 }}
+                    >
+                        <Menu className="h-6 w-6 text-primary" />
+                    </motion.button>
+                </div>
+                <div className="navbar-center">
+                    <a href="/" className="btn btn-ghost text-xl text-primary">
+                        coffeeBreak.
+                    </a>
+                </div>
+                <div className="navbar-end">
+                    <button className="btn btn-ghost btn-square">
+                        <div className="indicator">
+                            <Bell className="h-6 w-6 text-primary" />
+                            <span className="badge badge-xs badge-secondary indicator-item"></span>
+                        </div>
+                    </button>
                 </div>
             </div>
 
-            {/* Sidebar */}
-            <SideBar />
+            {/* Main Content */}
+            <div className="pt-16 px-4">
+                {console.log('Layout - Before Outlet in MobileLayout')}
+                <Outlet />
+                <Dock />
+            </div>
         </div>
     );
 };
 
 const DesktopLayout = () => {
-    const { menuItems, loading, error } = useContext(MenuContext);
+    const { items, getIconComponent } = useContext(MenuContext);
     console.log('Layout - Rendering DesktopLayout');
-
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
 
     return (
         <div className="w-full min-h-svh">
@@ -121,30 +168,26 @@ const DesktopLayout = () => {
                 <div className="navbar-start">
                     <div className="dropdown">
                         <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-5 w-5 text-base-100"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M4 6h16M4 12h16M4 18h7" />
-                            </svg>
+                            <Menu className="h-5 w-5 text-base-100" />
                         </div>
                         <ul
                             tabIndex={0}
                             className="menu menu-sm dropdown-content bg-secondary text-base-100 rounded-box z-10 mt-3 w-52 p-2 shadow-lg">
-                            {Array.isArray(menuItems) && menuItems.map((item, index) => (
-                                <li key={index}>
-                                    <a href={item.href} className="flex items-center gap-2">
-                                        {item.icon && <span>{item.icon}</span>}
+                            {Array.isArray(items) && items.map((item) => {
+                                const Icon = getIconComponent(item.icon);
+                                return (
+                                    <NavLink
+                                        key={item.id}
+                                        to={item.href}
+                                        className={({ isActive }) =>
+                                            `flex items-center gap-2 p-3 rounded-lg ${isActive ? 'bg-primary text-base-100' : 'hover:bg-base-200'}`
+                                        }
+                                    >
+                                        {Icon && <Icon className="w-5 h-5" />}
                                         <span>{item.label}</span>
-                                    </a>
-                                </li>
-                            ))}
+                                    </NavLink>
+                                );
+                            })}
                         </ul>
                     </div>
                 </div>
@@ -156,18 +199,7 @@ const DesktopLayout = () => {
                 <div className="navbar-end">
                     <button className="btn btn-ghost btn-circle">
                         <div className="indicator">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-5 w-5 text-base-100"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                            </svg>
+                            <Bell className="h-5 w-5 text-base-100" />
                             <span className="badge badge-xs badge-secondary indicator-item"></span>
                         </div>
                     </button>
