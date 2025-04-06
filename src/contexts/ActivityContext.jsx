@@ -17,7 +17,7 @@ export const ActivityProvider = ({ children }) => {
             try {
                 setLoading(true);
                 const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/activities/`);
-                console.log("Activity",response.data);
+                console.log("Activity", response.data);
                 setActivities(response.data); // Assuming the API returns an array of activities
             } catch (err) {
                 setError(err.message || "Failed to fetch activities");

@@ -31,6 +31,7 @@ const SideBar = () => {
 
 const MobileLayout = () => {
     const { menuItems } = useContext(MenuContext);
+    console.log('Layout - Rendering MobileLayout');
 
     const handleSwipeRight = () => {
         const drawerInput = document.getElementById("my-drawer");
@@ -94,6 +95,7 @@ const MobileLayout = () => {
 
                 {/* Main Content */}
                 <div className="pt-16 px-4">
+                    {console.log('Layout - Before Outlet in MobileLayout')}
                     <Outlet />
                     <Dock />
                 </div>
@@ -107,6 +109,7 @@ const MobileLayout = () => {
 
 const DesktopLayout = () => {
     const { menuItems, loading, error } = useContext(MenuContext);
+    console.log('Layout - Rendering DesktopLayout');
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
@@ -173,6 +176,7 @@ const DesktopLayout = () => {
 
             {/* Main Content */}
             <div className="pt-16">
+                {console.log('Layout - Before Outlet in DesktopLayout')}
                 <Outlet />
             </div>
         </div>
@@ -187,5 +191,6 @@ export default function Layout() {
         setIsMobile(!isDesktop);
     }, [isDesktop]);
 
+    console.log('Layout - Rendering main Layout component, isMobile:', isMobile);
     return <>{isMobile ? <MobileLayout /> : <DesktopLayout />}</>;
 }
