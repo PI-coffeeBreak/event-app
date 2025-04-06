@@ -9,3 +9,8 @@ Icon.propTypes = {
     icon: PropTypes.elementType, // React component for the icon
     className: PropTypes.string, // Additional custom classes
 };
+
+Icon.defaultProps = {
+    icon: FaCoffee,
+    className: "",
+};
