@@ -1,14 +1,12 @@
-import {NavLink} from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
-export default function DockButton({icon: Icon, pageName, pageUrl}){
-
+export default function DockButton({ icon: Icon, pageName, pageUrl }) {
     return (
-
-        <button className="dock-button">
-            <NavLink to={pageUrl}>
+        <NavLink to={pageUrl} className="dock-button-link">
+            <div className="dock-button">
                 <Icon className="text-md mx-auto text-white" />
                 <span className="dock-label text-white">{pageName}</span>
-            </NavLink>
-        </button>
+            </div>
+        </NavLink>
     )
 }

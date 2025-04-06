@@ -1,11 +1,27 @@
 import DockButton from "./DockButton.jsx";
-import { FaHome, FaUser} from "react-icons/fa";
+import { useMenu } from "../contexts/MenuContext";
 
-export default function Dock(){
+export default function Dock() {
+    const { items, loading, getIconComponent } = useMenu();
+
+    if (loading) {
+        return (
+            <div className="dock w-15/16 mx-auto mb-3 bg-primary rounded-xl animate-pulse">
+                {/* Placeholder loading state */}
+            </div>
+        );
+    }
+
     return (
         <div className="dock w-15/16 mx-auto mb-3 bg-primary rounded-xl">
-            <DockButton pageName="Home" icon={FaHome} pageUrl="/app/home"></DockButton>
-            <DockButton pageName="Profile" icon={FaUser} pageUrl="/app/profile"></DockButton>
+            {items.map((item) => (
+                <DockButton
+                    key={item.id}
+                    pageName={item.label}
+                    icon={getIconComponent(item.icon)}
+                    pageUrl={item.href}
+                />
+            ))}
         </div>
-    )
+    );
 }

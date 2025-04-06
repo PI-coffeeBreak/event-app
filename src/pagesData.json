@@ -1,0 +1,143 @@
+[
+  {
+    "page_id": "custom-page-1",
+    "title": "Custom Page 1",
+    "components": [
+      {
+        "name": "Title",
+        "component_id": "title-1",
+        "props": { "text": "Welcome to Custom Page 1", "className": "text-primary" }
+      },
+      {
+        "name": "Button",
+        "component_id": "button-1",
+        "props": { "text": "Click Me", "METHOD": "GET", "URL": "https://jsonplaceholder.typicode.com/posts/1" }
+      }
+    ]
+  },
+  {
+    "page_id": "custom-page-2",
+    "title": "Custom Page 2",
+    "components": [
+      {
+        "name": "Image",
+        "component_id": "image-1",
+        "props": { "src": "/path/to/image.jpg", "alt": "Example Image", "className": "w-32 h-32" }
+      },
+      {
+        "name": "Button",
+        "component_id": "button-2",
+        "props": { "text": "Submit", "METHOD": "POST", "URL": "https://jsonplaceholder.typicode.com/posts" }
+      }
+    ]
+  },
+  {
+    "page_id": "custom-page-3",
+    "title": "Custom Page 3",
+    "components": [
+      {
+        "name": "Text",
+        "component_id": "text-1",
+        "props": { "content": "This is a paragraph of text.", "className": "text-gray-700" }
+      },
+      {
+        "name": "Heading",
+        "component_id": "heading-1",
+        "props": { "level": 2, "text": "Subheading Example", "className": "text-secondary" }
+      },
+      {
+        "name": "List",
+        "component_id": "list-1",
+        "props": { "items": ["Item 1", "Item 2", "Item 3"], "ordered": false, "className": "text-primary" }
+      }
+    ]
+  },
+    {
+    "page_id": "custom-page-4",
+    "title": "Custom Page 4",
+    "props": { "className": "bg-gray-100 p-4" },
+    "components": [
+        {
+        "name": "Card",
+        "component_id": "card-1",
+        "components": [
+            {
+            "name": "Heading",
+            "props": { "level": 3, "text": "Card Title", "className": "text-primary" }
+            },
+            {
+            "name": "Text",
+            "props": { "content": "This is some content inside the card.", "className": "text-gray-700" }
+            },
+            {
+            "name": "Button",
+            "props": { "text": "Learn More", "METHOD": "GET", "URL": "https://jsonplaceholder.typicode.com/posts/1" }
+            }
+        ]
+        },
+        {
+        "name": "Card",
+        "component_id": "card-2",
+        "components": [
+            {
+            "name": "Heading",
+            "props": { "level": 3, "text": "Another Card Title", "className": "text-primary" }
+            },
+            {
+            "name": "Text",
+            "props": { "content": "This is some content inside another card.", "className": "text-gray-700" }
+            },
+            {
+            "name": "Button",
+            "props": { "text": "Read More", "METHOD": "GET", "URL": "https://jsonplaceholder.typicode.com/posts/1" }
+            }
+        ]
+        },
+        {
+        "name": "Row",
+        "component_id": "row-1",
+        "props": { "className": "flex space-x-4" },
+        "components": [
+            {
+            "name": "Button",
+            "props": { "text": "Click Here", "METHOD": "GET", "URL": "https://jsonplaceholder.typicode.com/posts/1" }
+            },
+            {
+            "name": "Button",
+            "props": { "text": "Submit", "METHOD": "POST", "URL": "https://jsonplaceholder.typicode.com/posts" }
+            },
+            {
+            "name": "Button",
+            "props": { "text": "Cancel", "METHOD": "DELETE", "URL": "https://jsonplaceholder.typicode.com/posts/1" }
+            }
+        ]
+        }
+    ]
+  },
+  {
+    "page_id": "activity-page",
+    "title": "Activity Page",
+    "components": [
+      {
+        "name": "Title",
+        "component_id": "title-activity",
+        "props": { "text": "Activity about AI", "className": "text-primary" }
+      },
+      {
+        "name": "Image",
+        "component_id": "image-activity",
+        "props": { "src": "", "alt": "Activity Image", "className": "h-64" }
+      },
+      {
+        "name": "Text",
+        "component_id": "text-activity",
+        "props": { "content": "This is a page for activities. skfl df jf kdf ddfh d jkfsj fdshf dj fds jdfh kjfhdsjkhf sh fjds jkh hjk dj dkj sjkf jskd dh fdsjk fkjsh sdh sjk kfsj hkjsdh fkshh fds fhdfsjfkfdhf fsdjhf sjhf dj ksdhsjd kjh fdfhkjjhfdskjf d jfdsjf dsjf jfkkdh sjfh jhf shhf jsh jsf hsjfh jkd jh jshh kjdshjsh fkshf sjkd fkshh jdh fks sj skh fjs sh jks ksdh fjksd jshh fkjhf sjdh shf js kj dhs fkjf hf sdkj kjs dfh  ", "className": "text-gray-700" }
+      },
+      {
+        "name": "Button",
+        "component_id": "button-activity",
+        "props": { "text": "Start Activity", "METHOD": "GET", "URL": "https://jsonplaceholder.typicode.com/posts/1" }
+      }
+    ]
+  }
+]

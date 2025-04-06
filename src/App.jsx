@@ -1,60 +1,77 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Home from "./pages/Home.jsx";
-import Profile from "./pages/Profile.jsx";
-import Schedule from "./pages/Schedule.jsx";
-import Layout from "./components/Layout.jsx";
+import { useEffect, useState } from "react";
+import Layout from "./components/Layout";
+import DynamicPage from "./components/DynamicPage";
 import { MenuProvider } from "./contexts/MenuContext.jsx";
 import { ActivityProvider } from "./contexts/ActivityContext.jsx";
+import { fetchPages } from "./services/pageService";
 
 export default function App() {
-  const pages = [
-    {
-      "page_id": "string",
-      "title": "string",
-      "components": [
-        {
-          "name": "string",
-          "component_id": "string"
-        }
-      ]
-    },
-    {
-      "page_id": "strin2",
-      "title": "string2",
-      "components": [
-        {
-          "name": "string2",
-          "component_id": "string2"
-        }
-      ]
-    }
-  ];
+  const [pages, setPages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  useEffect(() => {
+    const loadPages = async () => {
+      try {
+        const processedPages = await fetchPages();
+        setPages(processedPages);
+      } catch (err) {
+        console.error('App - Failed to load pages:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadPages();
+  }, []);
+
+  if (loading) {
+    console.log('App - Loading state');
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    console.error('App - Error state:', error);
+    return (
+      <div className="w-full h-screen flex items-center justify-center text-error">
+        <p>Error loading pages: {error}</p>
+      </div>
+    );
+  }
+
+  console.log('App - Rendering routes with pages:', pages);
   return (
     <Router>
-      <MenuProvider>
+      <MenuProvider endpoint="/ui/menu">
         <ActivityProvider>
           <Routes>
             <Route path="/app/*" element={<Layout />}>
-              <Route path="home" element={<Home />} />
-              <Route path="schedule" element={<Schedule />} />
-              <Route path="profile" element={<Profile />} />
-              {pages.map((page) => (
-                <Route
-                  key={page.page_id}
-                  path={page.page_id}
-                  element={
-                    <div className="w-full min-h-svh p-8">
-                      <h1>{page.title}</h1>
-                      {page.components.map((component) => (
-                        <div key={component.component_id}>
-                          <h2>{component.name}</h2>
-                        </div>
-                      ))}
-                    </div>
-                  }
-                />
-              ))}
+              {pages.map((page) => {
+                console.log('App - Creating route for page:', {
+                  page_id: page.page_id,
+                  title: page.title,
+                  url: page.url,
+                  components: page.components
+                });
+                return (
+                  <Route
+                    key={page.page_id}
+                    path={page.url}
+                    element={
+                      <>
+                        {console.log('App - Route matched:', page.url)}
+                        <DynamicPage title={page.title} components={page.components} />
+                      </>
+                    }
+                  />
+                );
+              })}
             </Route>
           </Routes>
         </ActivityProvider>
