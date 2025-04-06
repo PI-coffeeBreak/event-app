@@ -25,5 +25,7 @@ export default function DynamicComponent({ componentId, name, ...props }) {
 DynamicComponent.propTypes = {
     componentId: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
+    // Allow any additional props
+    // eslint-disable-next-line react/forbid-prop-types
     props: PropTypes.object
 }; 

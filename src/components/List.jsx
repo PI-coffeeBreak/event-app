@@ -1,10 +1,29 @@
-export default function List({ items = [], ordered = false, className = "" }) {
-    const Tag = ordered ? "ol" : "ul";
+import PropTypes from 'prop-types';
+import DynamicComponent from './DynamicComponent';
+
+export default function List({ components }) {
     return (
-        <Tag className={`list-disc pl-5 ${className}`}>
-            {items.map((item, index) => (
-                <li key={index}>{item}</li>
+        <div className="space-y-4">
+            {components.map((component) => (
+                <DynamicComponent
+                    key={component.component_id}
+                    componentId={component.component_id}
+                    name={component.name}
+                    {...component}
+                />
             ))}
-        </Tag>
+        </div>
     );
 }
+
+List.propTypes = {
+    components: PropTypes.arrayOf(
+        PropTypes.shape({
+            component_id: PropTypes.string.isRequired,
+            name: PropTypes.string.isRequired,
+            // Allow any additional props
+            // eslint-disable-next-line react/forbid-prop-types
+            props: PropTypes.object
+        })
+    ).isRequired
+}; 

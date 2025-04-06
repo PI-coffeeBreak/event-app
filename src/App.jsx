@@ -1,29 +1,10 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { useEffect, useState } from "react";
-import Layout from "./components/Layout.jsx";
-import DynamicPage from "./components/DynamicPage.jsx";
+import Layout from "./components/Layout";
+import DynamicPage from "./components/DynamicPage";
 import { MenuProvider } from "./contexts/MenuContext.jsx";
 import { ActivityProvider } from "./contexts/ActivityContext.jsx";
-import Title from "./components/Title.jsx";
-import Image from "./components/Image.jsx";
-import Button from "./components/Button.jsx";
-import Text from "./components/Text.jsx";
-import Heading from "./components/Heading.jsx";
-import List from "./components/List.jsx";
-import Card from "./components/Card.jsx";
-import Row from "./components/Row.jsx";
 import { fetchPages } from "./services/pageService";
-
-export const componentMap = {
-  Title,
-  Image,
-  Button,
-  Text,
-  Heading,
-  List,
-  Card,
-  Row,
-};
 
 export default function App() {
   const [pages, setPages] = useState([]);
