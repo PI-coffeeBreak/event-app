@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 export default function Title({
     text = "Default Title",
     color = "",
@@ -6,16 +8,24 @@ export default function Title({
     underline = false,
     className = "",
 }) {
-    // Dynamically build the className based on props
     const dynamicClasses = [
-        color, // Apply the color class
-        italic ? "italic" : "", // Apply italic if true
-        bold ? "font-bold" : "", // Apply bold if true
-        underline ? "underline" : "", // Apply underline if true
-        className, // Include any additional classes passed as props
+        color,
+        italic ? "italic" : "",
+        bold ? "font-bold" : "",
+        underline ? "underline" : "",
+        className,
     ]
-        .filter(Boolean) // Remove empty strings
-        .join(" "); // Join classes with a space
+        .filter(Boolean)
+        .join(" ");
 
     return <h1 className={`text-2xl ${dynamicClasses}`}>{text}</h1>;
 }
+
+Title.propTypes = {
+    text: PropTypes.string.isRequired, // Title text is required
+    color: PropTypes.string, // TailwindCSS color class
+    italic: PropTypes.bool, // Whether the text is italic
+    bold: PropTypes.bool, // Whether the text is bold
+    underline: PropTypes.bool, // Whether the text is underlined
+    className: PropTypes.string, // Additional custom classes
+};

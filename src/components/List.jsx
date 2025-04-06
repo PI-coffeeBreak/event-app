@@ -1,5 +1,5 @@
-import PropTypes from 'prop-types';
-import DynamicComponent from './DynamicComponent';
+import PropTypes from "prop-types";
+import DynamicComponent from "./DynamicComponent";
 
 export default function List({ components }) {
     return (
@@ -19,11 +19,9 @@ export default function List({ components }) {
 List.propTypes = {
     components: PropTypes.arrayOf(
         PropTypes.shape({
-            component_id: PropTypes.string.isRequired,
-            name: PropTypes.string.isRequired,
-            // Allow any additional props
-            // eslint-disable-next-line react/forbid-prop-types
-            props: PropTypes.object
+            component_id: PropTypes.string.isRequired, // Unique ID for each component
+            name: PropTypes.string.isRequired, // Component name
+            props: PropTypes.object, // Additional props for the component
         })
-    ).isRequired
-}; 
+    ).isRequired,
+};
