@@ -2,6 +2,7 @@ import { useContext, useEffect } from "react";
 import { motion, useMotionValue, useTransform, animate, AnimatePresence } from "framer-motion";
 import { NavLink } from "react-router-dom";
 import { MenuContext } from "../contexts/MenuContext";
+import PropTypes from 'prop-types';
 
 // Sidebar settings
 export const SIDEBAR_WIDTH = 280;
@@ -95,11 +96,11 @@ const Sidebar = ({ isOpen, setIsOpen, dragPosition }) => {
                 </div>
 
                 <ul className="menu text-primary w-full p-0">
-                    {Array.isArray(items) && items.map((item, index) => {
+                    {Array.isArray(items) && items.map((item) => {
                         const Icon = getIconComponent(item.icon);
                         return (
                             <NavLink
-                                key={index}
+                                key={item.id}
                                 to={item.href}
                                 onClick={() => setIsOpen(false)}
                                 className={({ isActive }) =>
@@ -115,6 +116,12 @@ const Sidebar = ({ isOpen, setIsOpen, dragPosition }) => {
             </motion.div>
         </div>
     );
+};
+
+Sidebar.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    setIsOpen: PropTypes.func.isRequired,
+    dragPosition: PropTypes.number
 };
 
 export default Sidebar; 

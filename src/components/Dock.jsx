@@ -26,18 +26,16 @@ export default function Dock() {
     if (items.length <= MAX_DOCK_ITEMS) {
         // If we have MAX_DOCK_ITEMS or fewer items, show all of them
         itemsToShow = items;
+    } else if (currentPageIndex === -1 || currentPageIndex < MAX_DOCK_ITEMS - 1) {
+        // If current page is not found or is in first MAX_DOCK_ITEMS - 1 items,
+        // show first MAX_DOCK_ITEMS items
+        itemsToShow = items.slice(0, MAX_DOCK_ITEMS);
     } else {
-        if (currentPageIndex === -1 || currentPageIndex < MAX_DOCK_ITEMS - 1) {
-            // If current page is not found or is in first MAX_DOCK_ITEMS - 1 items,
-            // show first MAX_DOCK_ITEMS items
-            itemsToShow = items.slice(0, MAX_DOCK_ITEMS);
-        } else {
-            // Show first MAX_DOCK_ITEMS - 1 items plus current item
-            itemsToShow = [
-                ...items.slice(0, MAX_DOCK_ITEMS - 1),
-                items[currentPageIndex]
-            ];
-        }
+        // Show first MAX_DOCK_ITEMS - 1 items plus current item
+        itemsToShow = [
+            ...items.slice(0, MAX_DOCK_ITEMS - 1),
+            items[currentPageIndex]
+        ];
     }
 
     return (

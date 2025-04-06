@@ -1,11 +1,10 @@
 import Dock from "./Dock.jsx";
-import { Outlet } from "react-router-dom";
+import { Outlet, NavLink } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
 import { useEffect, useState, useContext } from "react";
 import { MenuContext } from "../contexts/MenuContext";
 import { motion } from "framer-motion";
 import { Menu, Bell } from "lucide-react";
-import { NavLink } from "react-router-dom";
 import Sidebar, { SIDEBAR_WIDTH, DRAG_THRESHOLD, TOUCH_THRESHOLD, DRAG_START_THRESHOLD } from "./Sidebar";
 
 const MobileLayout = () => {
@@ -174,11 +173,11 @@ const DesktopLayout = () => {
                         <ul
                             tabIndex={0}
                             className="menu menu-sm dropdown-content bg-secondary text-base-100 rounded-box z-10 mt-3 w-52 p-2 shadow-lg">
-                            {Array.isArray(items) && items.map((item, index) => {
+                            {Array.isArray(items) && items.map((item) => {
                                 const Icon = getIconComponent(item.icon);
                                 return (
                                     <NavLink
-                                        key={index}
+                                        key={item.id}
                                         to={item.href}
                                         className={({ isActive }) =>
                                             `flex items-center gap-2 p-3 rounded-lg ${isActive ? 'bg-primary text-base-100' : 'hover:bg-base-200'}`
