@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
+import PropTypes from "prop-types"; // Import PropTypes for validation
 
 export default function Button({
     text = "Default Button",
@@ -85,3 +86,30 @@ export default function Button({
         </div>
     );
 }
+
+// Add PropTypes validation
+Button.propTypes = {
+    text: PropTypes.string, // Button label
+    METHOD: PropTypes.oneOf(["GET", "POST", "PUT", "DELETE"]), // HTTP method
+    URL: PropTypes.string.isRequired, // URL is required
+    color: PropTypes.string, // TailwindCSS text color class
+    italic: PropTypes.bool, // Whether the text is italic
+    bold: PropTypes.bool, // Whether the text is bold
+    underline: PropTypes.bool, // Whether the text is underlined
+    backgroundColor: PropTypes.string, // TailwindCSS background color class
+    textColor: PropTypes.string, // TailwindCSS text color class
+    className: PropTypes.string, // Additional custom classes
+};
+
+// Add default props
+Button.defaultProps = {
+    text: "Default Button",
+    METHOD: "GET",
+    color: "",
+    italic: false,
+    bold: false,
+    underline: false,
+    backgroundColor: "",
+    textColor: "",
+    className: "",
+};
