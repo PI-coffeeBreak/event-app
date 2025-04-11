@@ -4,6 +4,7 @@ import Layout from "./components/Layout";
 import DynamicPage from "./components/DynamicPage";
 import { MenuProvider } from "./contexts/MenuContext.jsx";
 import { ActivityProvider } from "./contexts/ActivityContext.jsx";
+import { NotificationsProvider } from "./contexts/NotificationsContext.jsx";
 import { fetchPages } from "./services/pageService";
 
 export default function App() {
@@ -48,34 +49,36 @@ export default function App() {
   console.log('App - Rendering routes with pages:', pages);
   return (
     <Router>
-      <MenuProvider endpoint="/ui/menu">
-        <ActivityProvider>
-          <Routes>
-            <Route path="/app/*" element={<Layout />}>
-              {pages.map((page) => {
-                console.log('App - Creating route for page:', {
-                  page_id: page.page_id,
-                  title: page.title,
-                  url: page.url,
-                  components: page.components
-                });
-                return (
-                  <Route
-                    key={page.page_id}
-                    path={page.url}
-                    element={
-                      <>
-                        {console.log('App - Route matched:', page.url)}
-                        <DynamicPage title={page.title} components={page.components} />
-                      </>
-                    }
-                  />
-                );
-              })}
-            </Route>
-          </Routes>
-        </ActivityProvider>
-      </MenuProvider>
+      <NotificationsProvider>
+        <MenuProvider endpoint="/ui/menu">
+          <ActivityProvider>
+            <Routes>
+              <Route path="/app/*" element={<Layout />}>
+                {pages.map((page) => {
+                  console.log('App - Creating route for page:', {
+                    page_id: page.page_id,
+                    title: page.title,
+                    url: page.url,
+                    components: page.components
+                  });
+                  return (
+                    <Route
+                      key={page.page_id}
+                      path={page.url}
+                      element={
+                        <>
+                          {console.log('App - Route matched:', page.url)}
+                          <DynamicPage title={page.title} components={page.components} />
+                        </>
+                      }
+                    />
+                  );
+                })}
+              </Route>
+            </Routes>
+          </ActivityProvider>
+        </MenuProvider>
+      </NotificationsProvider>
     </Router>
   );
 }
