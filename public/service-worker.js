@@ -53,3 +53,51 @@ self.addEventListener('fetch', (event) => {
     );
   }
 });
+
+// Push Event: show notification
+// assume payload is a JSON with a structure like { payload: { title: "Title", body: "Body", url: "URL" } }
+self.addEventListener("push", (event) => {
+  let data = {};
+  try {
+    data = event.data.json();
+  } catch (err) {
+    console.error("Error analysing push notification:", err);
+  }
+  const notifPayload = data.payload || {};
+  const title = notifPayload.title || "New Notification";
+  const options = {
+    body: notifPayload.body || "You have a new notification!",
+    icon: "/pwa-192x192.png",
+    badge: "/pwa-192x192.png",
+    data: {
+      url: notifPayload.url || "/" 
+    },
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(title, options)
+  );
+});
+
+// Notification Click Event: open URL
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+
+  const urlToOpen = event.notification.data?.url || "/";
+
+  event.waitUntil(
+    clients.matchAll({
+      type: "window",
+      includeUncontrolled: true
+    }).then(clientList => {
+      for (const client of clientList) {
+        if (client.url === urlToOpen && "focus" in client) {
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) {
+        return clients.openWindow(urlToOpen);
+      }
+    })
+  );
+});
