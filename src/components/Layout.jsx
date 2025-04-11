@@ -1,19 +1,124 @@
 import Dock from "./Dock.jsx";
 import { Outlet, NavLink } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useRef, useCallback } from "react";
 import { MenuContext } from "../contexts/MenuContext";
+import { useNotifications } from "../contexts/NotificationsContext";
 import { motion } from "framer-motion";
-import { Menu, Bell } from "lucide-react";
+import { Menu, Bell, X, Check } from "lucide-react";
 import Sidebar, { SIDEBAR_WIDTH, DRAG_THRESHOLD, TOUCH_THRESHOLD, DRAG_START_THRESHOLD } from "./Sidebar";
+import PropTypes from "prop-types";
+
+// Custom hook for handling clicks outside a referenced element
+const useClickOutside = (ref, handler) => {
+  useEffect(() => {
+    const listener = (event) => {
+      // Do nothing if clicking ref's element or descendent elements
+      if (!ref.current || ref.current.contains(event.target)) {
+        return;
+      }
+      handler(event);
+    };
+    
+    document.addEventListener("mousedown", listener);
+    return () => {
+      document.removeEventListener("mousedown", listener);
+    };
+  }, [ref, handler]);
+};
+
+// Notifications component
+const NotificationsDropdown = ({ notifications = [], onClose, onMarkAsRead, onMarkAllAsRead }) => {
+  return (
+    <div className="absolute top-12 right-0 w-80 mt-2 bg-base-100 border border-primary shadow-xl rounded-lg z-50 overflow-hidden">
+      <div className="p-4 border-b border-base-300 flex justify-between items-center">
+        <h3 className="font-semibold text-lg">Notifications</h3>
+        <button 
+          onClick={onClose}
+          className="btn btn-ghost btn-xs btn-circle"
+        >
+          <X size={16} />
+        </button>
+      </div>
+      
+      <div className="max-h-96 overflow-y-auto">
+        {notifications.length === 0 ? (
+          <div className="p-4 text-center text-gray-500">
+            No notifications
+          </div>
+        ) : (
+          notifications.map((notification) => (
+            <div 
+              key={notification.id} 
+              className={`p-4 border-b border-base-200 hover:bg-base-200 cursor-pointer ${!notification.delivered ? 'bg-base-200' : ''}`}
+            >
+              <div className="flex justify-between items-start">
+                <p className="text-sm mt-1">{notification.payload}</p>
+                {!notification.delivered && (
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent parent click
+                      onMarkAsRead(notification.id);
+                    }}
+                    className="btn btn-ghost btn-xs btn-circle"
+                  >
+                    <Check size={16} className="text-primary" />
+                  </button>
+                )}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+      
+      <div className="p-3 border-t border-base-300 text-center">
+        <button 
+          className="text-primary text-sm hover:underline"
+          onClick={onMarkAllAsRead}
+        >
+          Mark all as read
+        </button>
+      </div>
+    </div>
+  );
+};
+
+NotificationsDropdown.propTypes = {
+  notifications: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      payload: PropTypes.string.isRequired,
+      delivered: PropTypes.bool.isRequired
+    })
+  ),
+  onClose: PropTypes.func.isRequired,
+  onMarkAsRead: PropTypes.func.isRequired,
+  onMarkAllAsRead: PropTypes.func.isRequired
+};
+
+// Set default props for NotificationsDropdown
+NotificationsDropdown.defaultProps = {
+  notifications: []
+};
 
 const MobileLayout = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [dragPosition, setDragPosition] = useState(null);
     const [touchStart, setTouchStart] = useState(null);
     const [dragging, setDragging] = useState(false);
+    const [showNotifications, setShowNotifications] = useState(false);
+    const notificationRef = useRef(null);
+    
+    // Use the notifications context
+    const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
 
     console.log('Layout - Rendering MobileLayout');
+
+    // Use the custom hook instead of duplicating the useEffect logic
+    const handleCloseNotifications = useCallback(() => {
+      setShowNotifications(false);
+    }, []);
+    useClickOutside(notificationRef, handleCloseNotifications);
 
     // Handle touch start
     const handleTouchStart = (e) => {
@@ -137,13 +242,29 @@ const MobileLayout = () => {
                         coffeeBreak.
                     </a>
                 </div>
-                <div className="navbar-end">
-                    <button className="btn btn-ghost btn-square">
+                <div className="navbar-end relative" ref={notificationRef}>
+                    <button 
+                        className="btn btn-ghost btn-square"
+                        onClick={() => setShowNotifications(!showNotifications)}
+                    >
                         <div className="indicator">
                             <Bell className="h-6 w-6 text-primary" />
-                            <span className="badge badge-xs badge-secondary indicator-item"></span>
+                            {unreadCount > 0 && (
+                                <span className="badge badge-xs badge-primary indicator-item">
+                                    {unreadCount}
+                                </span>
+                            )}
                         </div>
                     </button>
+                    
+                    {showNotifications && (
+                        <NotificationsDropdown 
+                            notifications={notifications} 
+                            onClose={() => setShowNotifications(false)}
+                            onMarkAsRead={markAsRead}
+                            onMarkAllAsRead={markAllAsRead}
+                        />
+                    )}
                 </div>
             </div>
 
@@ -159,7 +280,19 @@ const MobileLayout = () => {
 
 const DesktopLayout = () => {
     const { items, getIconComponent } = useContext(MenuContext);
+    const [showNotifications, setShowNotifications] = useState(false);
+    const notificationRef = useRef(null);
+    
+    // Use the notifications context
+    const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
+    
     console.log('Layout - Rendering DesktopLayout');
+    
+    // Use the custom hook instead of duplicating the useEffect logic
+    const handleCloseNotifications = useCallback(() => {
+      setShowNotifications(false);
+    }, []);
+    useClickOutside(notificationRef, handleCloseNotifications);
 
     return (
         <div className="w-full min-h-svh">
@@ -167,12 +300,10 @@ const DesktopLayout = () => {
             <div className="navbar bg-primary shadow-sm fixed top-0 left-0 w-full z-50">
                 <div className="navbar-start">
                     <div className="dropdown">
-                        <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
+                        <button className="btn btn-ghost btn-circle">
                             <Menu className="h-5 w-5 text-base-100" />
-                        </div>
-                        <ul
-                            tabIndex={0}
-                            className="menu menu-sm dropdown-content bg-secondary text-base-100 rounded-box z-10 mt-3 w-52 p-2 shadow-lg">
+                        </button>
+                        <div className="dropdown-content menu menu-sm bg-secondary text-base-100 rounded-box z-10 mt-3 w-52 p-2 shadow-lg">
                             {Array.isArray(items) && items.map((item) => {
                                 const Icon = getIconComponent(item.icon);
                                 return (
@@ -188,7 +319,7 @@ const DesktopLayout = () => {
                                     </NavLink>
                                 );
                             })}
-                        </ul>
+                        </div>
                     </div>
                 </div>
                 <div className="navbar-center">
@@ -196,13 +327,29 @@ const DesktopLayout = () => {
                         coffeeBreak.
                     </a>
                 </div>
-                <div className="navbar-end">
-                    <button className="btn btn-ghost btn-circle">
+                <div className="navbar-end relative" ref={notificationRef}>
+                    <button 
+                        className="btn btn-ghost btn-circle"
+                        onClick={() => setShowNotifications(!showNotifications)}
+                    >
                         <div className="indicator">
                             <Bell className="h-5 w-5 text-base-100" />
-                            <span className="badge badge-xs badge-secondary indicator-item"></span>
+                            {unreadCount > 0 && (
+                                <span className="badge badge-xs badge-secondary indicator-item">
+                                    {unreadCount}
+                                </span>
+                            )}
                         </div>
                     </button>
+                    
+                    {showNotifications && (
+                        <NotificationsDropdown 
+                            notifications={notifications} 
+                            onClose={() => setShowNotifications(false)}
+                            onMarkAsRead={markAsRead}
+                            onMarkAllAsRead={markAllAsRead}
+                        />
+                    )}
                 </div>
             </div>
 
@@ -213,6 +360,13 @@ const DesktopLayout = () => {
             </div>
         </div>
     );
+};
+
+// Add PropTypes validation for Sidebar
+Sidebar.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  setIsOpen: PropTypes.func.isRequired,
+  dragPosition: PropTypes.number
 };
 
 export default function Layout() {
